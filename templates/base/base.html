@@ -1,0 +1,54 @@
+{% extends 'theme/main_template.html' %}
+{% block content %}
+{% load static %}
+
+<!-- Page Heading -->
+
+<h1 class="h3 mb-2 text-gray-800">Admin Dashboard</h1>
+<p class="mb-4">This is the list of managable devices in the network. Pelase <b>Click</b> on each device's hostname to configure or monitor them. </p>
+{% if not lists %}
+<h6 class="m-0 font-weight-bold text-primary">No Devices Found. Please Audit the network to add devices.</h6>
+<a href="{% url 'audit' %}" class ="btn btn-primary"> Audit </a>
+{% else %}
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Managable Network Devices</h6>
+  </div>
+
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Hostname</th>
+            <th>Device Type</th>
+
+            <th>Associated IP Address</th>
+            <th>Type of IOS</th>
+
+          </tr>
+        </thead>
+
+        <tbody>
+            {% for IP in lists %}
+            <tr>
+
+            <td><a href="{% url 'devicelogin' ip=IP.ipList type=IP.device_type ios=IP.ios %}">{{IP.hostname}}</a></td>
+            <td>{{IP.device_type}}</td>
+
+            <td>{{IP.ipList}}</td>
+
+            <td>{{IP.ios}}</td>
+
+
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+  {% endif %}
+{% endblock content %}

@@ -1,0 +1,19 @@
+{% extends 'theme/main_template.html' %}
+{% block content %}
+{% load static %}
+<h1>Audit Network Devices</h1>
+<p><span style="color:blue;"><b>Please Type A ablock of IP network followed by subnet mask in the box below in order to scan the Network.</b></span>.<br>
+<b><span style="color:green;"> Example:- 192.168.1.1/24 </span></b></p>
+<p><span style="color:blue;"><b>Make Sure the devices in network are reachable through this host and SNMP is enabled.</b></span></p>
+<p><span style="color:red;">{{message}}</span></p>
+<form action="/scanner/" method="post">
+{% csrf_token %}
+<input type="text" name="param" value="" placeholder="Type IP network">
+<br>
+<br>
+<input type="submit" class ="btn btn-primary" value="Scan">
+</form>
+<!-- <a href="{% url 'audit' %}" class ="btn btn-primary">
+  Scan IP
+</a> -->
+{% endblock content %}

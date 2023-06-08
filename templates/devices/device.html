@@ -1,0 +1,313 @@
+{% extends 'theme/main_template.html' %}
+{% block content %}
+{% load static %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+  document.addEventListener("DOMContentLoaded", function(){
+  document.getElementById('route').click();
+  setInterval(function() {
+
+    var request = new XMLHttpRequest();
+    request.open('GET', '{% static '/data/data.json' %}');
+    request.onload = function(){
+      // console.log(request.responseText);
+
+      var data = JSON.parse(request.responseText);
+      renderHTML(data);
+    };
+    request.send();
+
+
+  }, 1000);
+  });
+
+
+    function renderHTML(data)
+    {
+        var tbody= document.getElementsByTagName('tbody')[0];
+        var route = document.getElementById('London');
+        var routetable="";
+        var ospf="";
+        var bgp="";
+        var eigrp="";
+        var table="";
+        var routerinfo=""
+        data['interface'].forEach(int =>{
+
+          table +='<tr><td><a href="#my_modal" data-toggle="modal" data-id="'+int.interface+'"class="open-AddBookDialog btn btn-primary">' + int.interface +'</a></td><td>'+int.ip_address+'</td><td>'+int.link_status+'</td><td>'+int.protocol_status+'</td></tr>';
+          tbody.innerHTML = table;
+
+        });
+        routetable +='<h3>Routing Table</h3><span style="white-space: pre-line"><p>'+data['route']+'</span></p>'
+        ospf +='<h3>OSPF Neighbors</h3><span style="white-space: pre-line"><p>'+data['ospf']+'</span></p>'
+        eigrp +='<h3>EIGRP Neighbors</h3><span style="white-space: pre-line"><p>'+data['eigrp']+'</span></p>'
+        bgp +='<h3>BGP Summary</h3><span style="white-space: pre-line"><p>'+data['bgp']+'</span></p>'
+        route.innerHTML = routetable;
+        document.getElementById('france').innerHTML = ospf
+        document.getElementById('japan').innerHTML = eigrp
+        document.getElementById('nepal').innerHTML = bgp
+        data['version'].forEach(ver =>{
+
+          routerinfo +='<p id="routerinfo"><b>Hostname:</b>'+ver.hostname +'&emsp;<b>Uptime:</b>'+ver.uptime+'&emsp;<b>Version:</b>'+ver.version+'</p>';
+          document.getElementById('routerinfo').innerHTML = routerinfo;
+
+        });
+
+    }
+
+
+   $(document).on("click", ".open-AddBookDialog", function () {
+     var intid = $(this).data('id');
+     $(".modal-body #intid").val( intid );
+
+   });
+
+   function openCity(evt, cityName)
+   {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(cityName).style.display = "block";
+      evt.currentTarget.className += " active";
+   }
+
+
+</script>
+
+<!-- Page Heading -->
+<form id="int-form" action="/confChange/" method="post">
+{% csrf_token %}
+<div class="modal fade" id="my_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <div id="form-messages"></div>
+        <h4 class="modal-title w-100 font-weight-bold">Change config</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <input type="hidden" name="intid" id="intid" value="">
+        <div class="md-form mb-5">
+          <label data-error="wrong" data-success="right" for="form34">IP address</label>
+          <input type="text" name="ip" class="form-control data-fv-ip___ipv4">
+        </div>
+        <div class="md-form mb-5">
+          <label data-error="wrong" data-success="right" for="form29">Subnet mask</label>
+          <input type="text" name="mask" class="form-control validate">
+        </div>
+        <div class="md-form mb-5">
+          <label data-error="wrong" data-success="right" for="form29">Line status(shutdown/noshutdown)</label><br>
+          <input type="radio" id="shutdown" name="ls" value="shutdown">
+          <label>Shutdown</label><br>
+          <input type="radio" id="noshutdown" name="ls" value="no shutdown">
+          <label>No Shutdown</label>
+        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+        <button class="btn btn-primary" type ="submit" name="submit" onclick="ValidateIPaddress(document.int-form.ip,document.int-form.mask )">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+<!-- {% for ver in version %}
+<h1 class="h3 mb-2 text-gray-800" id="routerinfo">{{ver.hostname}}</h1>
+{%endfor%} -->
+<div class="" id="routerinfo">
+
+</div>
+<div class="" id="backup">
+  <form class="form-inline col-md-offset-2 col-md-7" method="post" action="/backupConf/">
+    <input type="hidden" name="device" value="cisco_router">
+      <button type="submit" class="btn btn-success" name="submit">Backup Configuration</button>
+    {% csrf_token %}
+    </form>
+</div>
+<!-- For breaking the lines and printing exact output -->
+<div class="d-flex justify-content-between">
+<div class="p-2">
+  <div class="tab">
+    <button id="route" class="tablinks" onclick="openCity(event, 'London')">Route Table</button>
+    <button class="tablinks" onclick="openCity(event, 'Paris')">OSPF</button>
+    <button class="tablinks" onclick="openCity(event, 'Tokyo')">EIGRP</button>
+    <button class="tablinks" onclick="openCity(event, 'Pokhara')">BGP</button>
+    <button class="tablinks" onclick="openCity(event, 'Kathmandu')">Configure</button>
+  </div>
+
+  <div id="London" class="tabcontent">
+    <!-- <h3>Routing Table</h3>
+    <p>{{route|linebreaks}}</p> -->
+  </div>
+
+  <div id="Paris" class="tabcontent">
+    <div id="france">
+
+    </div>
+    <h3>Configure OSPF</h3>
+    <form class="form-inline col-md-offset-2 col-md-7" method="get" action="/confChange/">
+      {% csrf_token %}
+        <div class="form-group">
+            <input type="text" class="form-control" name="ospf_id" placeholder="Ospf Number" required="true">
+        </div>
+        <div class="form-group">
+
+            <input type="text" class="form-control" name="onetwork" placeholder="Network">
+            <input type="text" class="form-control" name="omask" placeholder="mask">
+            <input type="text" class="form-control" name="oarea" placeholder="Area">
+        </div>
+
+        <button type="submit" class="btn btn-primary" name="submit">Save</button>
+    </form>
+  </div>
+
+  <div id="Tokyo" class="tabcontent">
+    <div id="japan">
+
+    </div>
+    <h3>Configure EIGRP</h3>
+    <form class="form-inline col-md-offset-2 col-md-7" method="get" action="/confChange/">
+      {% csrf_token %}
+        <div class="form-group">
+            <input type="text" class="form-control" name="eigrp_id" placeholder="Eigrp AS Number" required="true">
+        </div>
+        <div class="form-group">
+
+            <input type="text" class="form-control" name="enetwork" placeholder="Network">
+            <input type="text" class="form-control" name="emask" placeholder="mask">
+
+        </div>
+
+        <button type="submit" class="btn btn-primary" name="submit">Save</button>
+    </form>
+  </div>
+  <div id="Pokhara" class="tabcontent">
+    <div id="nepal">
+
+    </div>
+    <h3>Configure BGPP</h3>
+    <form class="form-inline col-md-offset-2 col-md-7" method="get" action="/confChange/">
+      {% csrf_token %}
+        <div class="form-group">
+            <input type="text" class="form-control" name="bgp_id" placeholder="AS Number" required="true">
+        </div>
+        <div class="form-group">
+
+            <input type="text" class="form-control" name="bgpn" placeholder="BGP neighbor address">
+            <input type="text" class="form-control" name="ras" placeholder="Neighbor remote AS">
+
+        </div>
+
+        <button type="submit" class="btn btn-primary" name="submit">Save</button>
+    </form>
+  </div>
+  <div id="Kathmandu" class="tabcontent">
+
+    <form class="form-horizontal" action="/confChange/" method="get">
+      {% csrf_token %}
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="email">Hostname:</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" placeholder="Enter hostname" name="hostname">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="pwd">Command:</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control"  placeholder="One Command to be executed in config mode" name="olc">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary" name="submit">Submit</button>
+      </div>
+    </div>
+  </form>
+  </div>
+</div>
+
+<div class="p-2">
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Interfaces</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>Interfaces</th>
+              <th>IP address</th>
+              <th>Link Status</th>
+              <th>Protocol Status</th>
+
+            </tr>
+          </thead>
+
+          <tbody>
+            <div class="tablebody">
+
+            </div>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<style>
+
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+</style>
+
+{% endblock content %}

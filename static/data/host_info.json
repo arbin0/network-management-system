@@ -1,0 +1,7 @@
+{
+  "device_type": "cisco_ios",
+  "host": "10.0.0.1",
+  "username": "cisco",
+  "password": "cisco",
+  "secret": "cisco"
+}
