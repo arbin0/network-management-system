@@ -13,7 +13,6 @@ This repository contains a **Network Management System (NMS)** built with Python
 
 ## Project Structure
 
-```plaintext
 .
 ├── alert.py              # Generates alerts for network issues
 ├── backupConfig.py       # Handles configuration backup tasks
@@ -28,44 +27,47 @@ This repository contains a **Network Management System (NMS)** built with Python
 ├── static/               # Static files for the web interface
 └── LICENSE               # Project license
 
-Requirements
+## Requirements
 
-## To set up and run this project, ensure the following dependencies are installed:
+- Python 3.8+
+- Django Framework
+- SQLite3
+- Paramiko for SSH management
+- ntc-templates for template parsing
 
-   - **Python 3.8+
-    - **Django Framework
-    - **SQLite3
-    - **Paramiko for SSH management
-    - **ntc-templates for template parsing
-
-## Install all required packages using:
+Install all required packages using:
 
 pip install -r requirements.txt
 
-Setup and Usage
+## Setup and Usage
 
-    Clone the Repository:
+1. **Clone the Repository:**
 
-git clone https://github.com/arbin0/network-management-system.git
-cd network-management-system
+    git clone https://github.com/arbin0/network-management-system.git
+    cd network-management-system
 
-Configure Devices:
+2. **Configure Devices:**
 
-Update device details in relevant Python scripts or configuration files.
+    Update device details in relevant Python scripts or configuration files.
 
-Run the System:
+3. **Run the System:**
 
     python manage.py runserver
 
-    Access the Web Interface:
-    Open a browser and navigate to http://127.0.0.1:8000.
+4. **Access the Web Interface:**  
+   Open a browser and navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
-    Scripts:
-    Use the Python scripts (e.g., scan_script.py, backupConfig.py) for specific network tasks.
+5. **Scripts:**  
+   Use the Python scripts (e.g., `scan_script.py`, `backupConfig.py`) for specific network tasks.
 
-Contributing
+## Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests to improve the project.
-License
+
+## License
 
 This project is licensed under the MIT License.
+
+## Contact
+
+For queries or feedback, please reach out via GitHub issues or contact the repository owner @arbin0 - arbinkhadka10@gmail.com
