@@ -13,7 +13,7 @@ This repository contains a **Network Management System (NMS)** built with Python
 
 ## Project Structure
 
-.
+```plaintext
 ├── alert.py              # Generates alerts for network issues
 ├── backupConfig.py       # Handles configuration backup tasks
 ├── junosLogin.py         # Script for logging into Junos-based devices
@@ -26,7 +26,7 @@ This repository contains a **Network Management System (NMS)** built with Python
 ├── templates/            # HTML templates for the web interface
 ├── static/               # Static files for the web interface
 └── LICENSE               # Project license
-
+```
 ## Requirements
 
 - Python 3.8+
